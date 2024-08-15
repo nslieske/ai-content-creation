@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,14 +6,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import UserAssets from './UserAssets';
 
 const AIContentForm = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const [selectedAssets, setSelectedAssets] = useState([]);
 
   const onSubmit = (data) => {
-    console.log(data);
+    const formData = {
+      ...data,
+      selectedAssets: selectedAssets
+    };
+    console.log(formData);
     toast.success("Content generated successfully!");
     // Here you would typically send the data to an API
+  };
+
+  const handleAssetSelect = (assets) => {
+    setSelectedAssets(assets);
   };
 
   return (
@@ -63,6 +73,8 @@ const AIContentForm = () => {
           </div>
         </RadioGroup>
       </div>
+
+      <UserAssets onAssetSelect={handleAssetSelect} />
 
       <Button type="submit" className="w-full">Generate Content</Button>
     </form>
