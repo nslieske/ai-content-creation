@@ -12,15 +12,20 @@ const UserAssets = ({ onAssetSelect }) => {
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const newAsset = {
-        id: Date.now(),
-        name: newAssetName || file.name,
-        file: file,
-        selected: false
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const newAsset = {
+          id: Date.now(),
+          name: newAssetName || file.name,
+          file: file,
+          preview: e.target.result,
+          selected: false
+        };
+        setAssets([...assets, newAsset]);
+        setNewAssetName('');
+        toast.success("Asset uploaded successfully!");
       };
-      setAssets([...assets, newAsset]);
-      setNewAssetName('');
-      toast.success("Asset uploaded successfully!");
+      reader.readAsDataURL(file);
     }
   };
 
@@ -51,18 +56,30 @@ const UserAssets = ({ onAssetSelect }) => {
             type="file"
             onChange={handleFileUpload}
             className="w-full"
+            accept="image/*,video/*,audio/*"
           />
         </div>
       </div>
-      <div className="space-y-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {assets.map(asset => (
-          <div key={asset.id} className="flex items-center space-x-2">
-            <Checkbox
-              id={`asset-${asset.id}`}
-              checked={asset.selected}
-              onCheckedChange={() => toggleAssetSelection(asset.id)}
-            />
-            <Label htmlFor={`asset-${asset.id}`}>{asset.name}</Label>
+          <div key={asset.id} className="border rounded-lg p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor={`asset-${asset.id}`} className="font-medium">{asset.name}</Label>
+              <Checkbox
+                id={`asset-${asset.id}`}
+                checked={asset.selected}
+                onCheckedChange={() => toggleAssetSelection(asset.id)}
+              />
+            </div>
+            {asset.file.type.startsWith('image/') && (
+              <img src={asset.preview} alt={asset.name} className="w-full h-32 object-cover rounded" />
+            )}
+            {asset.file.type.startsWith('video/') && (
+              <video src={asset.preview} className="w-full h-32 object-cover rounded" controls />
+            )}
+            {asset.file.type.startsWith('audio/') && (
+              <audio src={asset.preview} className="w-full" controls />
+            )}
           </div>
         ))}
       </div>
