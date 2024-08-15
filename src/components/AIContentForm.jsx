@@ -6,19 +6,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const AIContentForm = ({ userAssets }) => {
-  const { register, handleSubmit, formState: { errors }, setValue } = useForm();
+const AIContentForm = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = (data) => {
     console.log(data);
     toast.success("Content generated successfully!");
     // Here you would typically send the data to an API
-  };
-
-  const handleAssetSelect = (value) => {
-    setValue('selectedAsset', value);
   };
 
   return (
@@ -68,24 +63,6 @@ const AIContentForm = ({ userAssets }) => {
           </div>
         </RadioGroup>
       </div>
-
-      {userAssets.length > 0 && (
-        <div>
-          <Label htmlFor="selectedAsset">Select Asset</Label>
-          <Select onValueChange={handleAssetSelect}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select an asset" />
-            </SelectTrigger>
-            <SelectContent>
-              {userAssets.map((asset, index) => (
-                <SelectItem key={index} value={asset}>
-                  {asset}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
 
       <Button type="submit" className="w-full">Generate Content</Button>
     </form>
